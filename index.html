@@ -1,0 +1,612 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>LearnHub - Project Implementation</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background: #f3f6fa;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 900px;
+      margin: 36px auto;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px #0001;
+      padding: 40px 36px;
+      min-height: 620px;
+    }
+    h1, h2 {
+      color: #2a3d66;
+      margin-bottom: 10px;
+    }
+    .btn, button {
+      background: #3563a9;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px 26px;
+      font-size: 1em;
+      cursor: pointer;
+      margin: 10px 0 0 0;
+      transition: background .18s;
+    }
+    .btn:hover, button:hover {
+      background: #28497a;
+    }
+    input, select, textarea {
+      margin: 5px 0 16px 0;
+      padding: 10px 11px;
+      border-radius: 4px;
+      border: 1px solid #c9d6e3;
+      font-size: 1em;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .hidden { display: none; }
+    .center { text-align: center; }
+    .nav {
+      margin-bottom: 28px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+    .nav button {
+      background: #e5ecf7;
+      color: #264a6e;
+      border: 1px solid #d3e0ef;
+      font-weight: 500;
+      transition: background .16s;
+      padding: 8px 18px;
+    }
+    .nav button.active,
+    .nav button:focus {
+      background: #2a3d66;
+      color: #fff;
+      outline: none;
+    }
+    .landing-hero {
+      text-align: center;
+      margin: 70px 0 50px 0;
+    }
+    .landing-hero h1 {
+      font-size: 2.7em;
+      font-weight: bold;
+    }
+    .landing-hero p {
+      color: #4d6072;
+      font-size: 1.25em;
+      margin-bottom: 30px;
+    }
+    .dashboard-header {
+      color: #264a6e;
+      font-size: 1.65em;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    .panel {
+      border-radius: 10px;
+      background: #f7faff;
+      padding: 23px 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 8px #ddd5;
+    }
+    .list {
+      margin: 0 0 12px 0;
+      padding: 0;
+      list-style: none;
+    }
+    .list li {
+      background: #F0E68C;
+      padding: 10px 16px;
+      border-radius: 6px;
+      margin-bottom: 7px;
+      border-left: 4px solid #3563a9;
+      font-size: 1em;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .role-badge {
+      background: #F0E68C;
+      color: #264a6e;
+      font-size: 12px;
+      border-radius: 4px;
+      padding: 3px 9px;
+      margin-left: 8px;
+      font-weight: 500;
+    }
+    .course-badge {
+      background: #BDB76C;
+      color: #228b22;
+      font-size: 12px;
+      border-radius: 4px;
+      padding: 3px 9px;
+      margin-left: 8px;
+      font-weight: 400;
+    }
+    .paid-badge {
+      background: #ffe4e0;
+      color: #c0392b;
+      font-size: 12px;
+      border-radius: 4px;
+      padding: 3px 9px;
+      margin-left: 8px;
+    }
+    .cert {
+      color: #FFEFD5;
+      font-weight: bold;
+      font-size: 1.03em;
+      margin-top: 10px;
+    }
+    .forum {
+      background: #f7faff;
+      border-radius: 8px;
+      padding: 11px 16px;
+      margin: 12px 0;
+    }
+    .forum-post {
+      margin: 6px 0;
+      font-size: .98em;
+    }
+    .logout-btn {
+      float: right;
+      background: #e74c3c;
+      color: #fff;
+      padding: 8px 18px;
+      margin-top: -8px;
+      margin-bottom: 0;
+      font-size: .97em;
+      transition: background .15s;
+    }
+    .logout-btn:hover {
+      background: #c0392b;
+    }
+    .dashboard-cards {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+      margin-bottom: 20px;
+    }
+    .dashboard-card {
+      background: #e5ecf7;
+      border-radius: 8px;
+      padding: 18px 18px 12px 18px;
+      flex: 1 1 230px;
+      text-align: center;
+      min-width: 180px;
+    }
+    .dashboard-card h3 {
+      margin: 0 0 7px 0;
+      color: #2a3d66;
+      font-size: 1.2em;
+    }
+    .dashboard-card span {
+      font-size: 1.6em;
+      font-weight: bold;
+      color: #28497a;
+    }
+    @media (max-width:600px) {
+      .container { padding: 7px; }
+      .dashboard-cards { flex-direction: column; gap: 14px; }
+      .dashboard-card { min-width: 120px; }
+      .landing-hero h1 { font-size: 1.5em; }
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <!-- Navigation -->
+  <div class="nav" id="main-nav">
+    <button class="active" onclick="showLanding()" id="nav-home">Home</button>
+    <button onclick="showRegister()" id="nav-register">Register</button>
+    <button onclick="showLogin()" id="nav-login">Login</button>
+    <button class="hidden" onclick="logout()" id="nav-logout">Logout</button>
+  </div>
+  <!-- Main Content -->
+  <div id="main-content"></div>
+</div>
+<script>
+// === DATA (Simulated Database) ===
+const users = [
+  {email:"varshi@demo.com", password:"varshi123", role:"student", enrolled:[], certificates:[], progress:{}, name:"varshi"},
+  {email:"navya@demo.com", password:"navya123", role:"teacher", enrolled:[], certificates:[], progress:{}, name:"navya"},
+  {email:"guide@demo.com", password:"guide123", role:"guide", enrolled:[], certificates:[], progress:{}, name:"guide"}
+];
+const courses = [
+  {id:1, name:"Web Development Fundamentals", category:"Programming", instructor:"navya@demo.com", description:"Learn HTML, CSS, JavaScript basics.", syllabus:"HTML, CSS, JS, Mini Project", paid:false, price:0, students:[], posts:[], completed:[]},
+  {id:2, name:"Advanced Web Development", category:"Programming", instructor:"navya@demo.com", description:"React, Node.js, Full-stack Project", syllabus:"React, Node.js, Project", paid:true, price:49, students:[], posts:[], completed:[]}
+];
+// Session
+let currentUser = null;
+let currentDashboardTab = "";
+
+// === NAVIGATION ===
+function setActiveNav(id) {
+  document.querySelectorAll('.nav button').forEach(btn => btn.classList.remove('active'));
+  if (id) document.getElementById(id).classList.add('active');
+}
+function showLanding() {
+  setActiveNav('nav-home');
+  document.getElementById('main-content').innerHTML = `
+    <div class="landing-hero">
+      <h1>Welcome to LearnHub</h1>
+      <p>Your Center for Skill Enhancement.<br>
+      Flexible, accessible, and interactive online learning for everyone.<br>
+      <b>Self-paced courses, live support, certifications, and more!</b></p>
+      <button class="btn" onclick="showRegister()">Get Started</button>
+    </div>
+  `;
+}
+function showRegister() {
+  setActiveNav('nav-register');
+  document.getElementById('main-content').innerHTML = `
+    <h2>Register</h2>
+    <form id="register-form" onsubmit="event.preventDefault();doRegister();">
+      <label>Name: <input required type="text" id="reg-name" maxlength="30"></label>
+      <label>Email: <input required type="email" id="reg-email"></label>
+      <label>Password: <input required type="password" id="reg-password"></label>
+      <label>Role:
+        <select id="reg-role">
+          <option value="student">Student</option>
+          <option value="teacher">Teacher</option>
+        </select>
+      </label>
+      <button type="submit" class="btn">Register</button>
+    </form>
+    <div style="margin-top:12px;color:#d34e00;" id="reg-msg"></div>
+    <p style="font-size:0.98em;color:#5d6d7e;">Demo logins:<br>
+      Student: Anusha@demo.com/Anusha123 <br>
+      Teacher: Poornima@demo.com/Poornima123 <br>
+      Admin: guide@demo.com/guide123
+    </p>
+  `;
+}
+function showLogin() {
+  setActiveNav('nav-login');
+  document.getElementById('main-content').innerHTML = `
+    <h2>Login</h2>
+    <form id="login-form" onsubmit="event.preventDefault();doLogin();">
+      <label>Email: <input required type="email" id="login-email"></label>
+      <label>Password: <input required type="password" id="login-password"></label>
+      <button type="submit" class="btn">Login</button>
+    </form>
+    <div style="margin-top:12px;color:#d34e00;" id="login-msg"></div>
+    <p style="font-size:0.98em;color:#5d6d7e;">Demo logins:<br>
+      Student: Anusha@demo.com/Anusha123 <br>
+      Teacher: Poornima@demo.com/Poornima123 <br>
+      Admin: guide@demo.com/guide123
+    </p>
+  `;
+}
+function showDashboard() {
+  document.getElementById('nav-home').classList.remove('active');
+  document.getElementById('nav-register').classList.add('hidden');
+  document.getElementById('nav-login').classList.add('hidden');
+  document.getElementById('nav-logout').classList.remove('hidden');
+  if (currentUser.role === "admin") showAdminDashboard();
+  else if (currentUser.role === "teacher") showTeacherDashboard();
+  else showStudentDashboard();
+}
+function logout() {
+  currentUser = null;
+  document.getElementById('nav-register').classList.remove('hidden');
+  document.getElementById('nav-login').classList.remove('hidden');
+  document.getElementById('nav-logout').classList.add('hidden');
+  showLanding();
+}
+
+// === AUTH ===
+function doRegister() {
+  const name = document.getElementById('reg-name').value.trim();
+  const email = document.getElementById('reg-email').value.trim();
+  const password = document.getElementById('reg-password').value.trim();
+  const role = document.getElementById('reg-role').value;
+  if (!name || !email || !password) {
+    document.getElementById('reg-msg').textContent = "All fields required.";
+    return;
+  }
+  if (users.some(u => u.email === email)) {
+    document.getElementById('reg-msg').textContent = "Email already registered.";
+    return;
+  }
+  users.push({email, password, role, enrolled:[], certificates:[], progress:{}, name});
+  document.getElementById('reg-msg').style.color = "#F0E68C";
+  document.getElementById('reg-msg').textContent = "Registration successful! Please login.";
+  setTimeout(showLogin, 1200);
+}
+function doLogin() {
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value.trim();
+  const user = users.find(u => u.email === email && u.password === password);
+  if (!user) {
+    document.getElementById('login-msg').textContent = "Invalid credentials!";
+    return;
+  }
+  currentUser = user;
+  document.getElementById('nav-register').classList.add('hidden');
+  document.getElementById('nav-login').classList.add('hidden');
+  document.getElementById('nav-logout').classList.remove('hidden');
+  showDashboard();
+}
+
+// === ADMIN DASHBOARD ===
+function showAdminDashboard() {
+  document.getElementById('main-content').innerHTML = `
+    <div class="dashboard-header">Admin Dashboard</div>
+    <div class="dashboard-cards">
+      <div class="dashboard-card"><h3>Total Users</h3><span>${users.length}</span></div>
+      <div class="dashboard-card"><h3>Total Courses</h3><span>${courses.length}</span></div>
+      <div class="dashboard-card"><h3>Total Enrollments</h3><span>${
+        courses.reduce((a,c)=>a+c.students.length,0)
+      }</span></div>
+    </div>
+    <div class="panel">
+      <h3>All Users</h3>
+      <ul class="list">
+        ${users.map(u=>`<li>${u.name} (${u.email}) <span class="role-badge">${u.role}</span></li>`).join('')}
+      </ul>
+    </div>
+    <div class="panel">
+      <h3>All Courses</h3>
+      <ul class="list">
+        ${courses.map(c=>`<li>${c.name} <span class="course-badge">${c.category}</span> by ${c.instructor} | Enrolled: ${c.students.length}</li>`).join('')}
+      </ul>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  `;
+}
+
+// === TEACHER DASHBOARD ===
+function showTeacherDashboard(tab) {
+  currentDashboardTab = tab || currentDashboardTab || "my-courses";
+  let teachCourses = courses.filter(c=>c.instructor===currentUser.email);
+  let nav = `
+    <div style="margin-bottom:22px;">
+      <button class="${currentDashboardTab==='my-courses'?'active':''}" onclick="showTeacherDashboard('my-courses')">My Courses</button>
+      <button class="${currentDashboardTab==='create'?'active':''}" onclick="showTeacherDashboard('create')">Create Course</button>
+    </div>
+  `;
+  let content = '';
+  if (currentDashboardTab==='my-courses') {
+    content = `
+      <div class="dashboard-header">Teacher Dashboard</div>
+      <div class="panel">
+        <h3>Your Courses</h3>
+        ${teachCourses.length===0?"<p>You have not created any courses yet.</p>":""}
+        <ul class="list">
+          ${teachCourses.map(c=>`
+            <li>
+              <div>
+                <b>${c.name}</b> <span class="course-badge">${c.category}</span>
+                ${c.paid?'<span class="paid-badge">Paid</span>':'<span class="course-badge">Free</span>'}<br>
+                Students Enrolled: <b>${c.students.length}</b>
+              </div>
+              <button onclick="editCourse(${c.id})">Edit</button>
+            </li>
+          `).Anu('')}
+        </ul>
+      </div>
+    `;
+  }
+  if (currentDashboardTab==='create') {
+    content = `
+      <div class="dashboard-header">Create a New Course</div>
+      <form id="new-course-form" onsubmit="event.preventDefault();createCourse();">
+        <label>Name: <input required id="course-name"></label>
+        <label>Category: <input required id="course-category"></label>
+        <label>Description: <textarea required id="course-desc"></textarea></label>
+        <label>Syllabus: <textarea required id="course-syllabus"></textarea></label>
+        <label>Paid? <input type="checkbox" id="course-paid" onchange="document.getElementById('course-price').disabled=!this.checked"></label>
+        <label>Price: $<input type="number" id="course-price" value="0" min="0" disabled></label>
+        <button type="submit" class="btn">Create Course</button>
+      </form>
+    `;
+  }
+  document.getElementById('main-content').innerHTML = nav + content + `<button class="logout-btn" onclick="logout()">Logout</button>`;
+}
+function createCourse() {
+  let name = document.getElementById('course-name').value.trim();
+  let category = document.getElementById('course-category').value.trim();
+  let desc = document.getElementById('course-desc').value.trim();
+  let syllabus = document.getElementById('course-syllabus').value.trim();
+  let paid = document.getElementById('course-paid').checked;
+  let price = Number(document.getElementById('course-price').value)||0;
+  let id = courses.length?Math.max(...courses.map(c=>c.id))+1:1;
+  courses.push({
+    id, name, category, instructor:currentUser.email, description:desc, syllabus, paid, price,
+    students:[], posts:[], completed:[]
+  });
+  alert("Course created!");
+  showTeacherDashboard('my-courses');
+}
+function editCourse(cid) {
+  let c = courses.find(c=>c.id===cid);
+  let html = `
+    <div class="dashboard-header">Edit Course</div>
+    <form id="edit-course-form" onsubmit="event.preventDefault();saveCourse(${cid});">
+      <label>Name: <input required id="edit-cname" value="${c.name}"></label>
+      <label>Category: <input required id="edit-ccat" value="${c.category}"></label>
+      <label>Description: <textarea required id="edit-cdesc">${c.description}</textarea></label>
+      <label>Syllabus: <textarea required id="edit-csyll">${c.syllabus}</textarea></label>
+      <label>Paid? <input type="checkbox" id="edit-cpaid" ${c.paid?'checked':''} onchange="document.getElementById('edit-cprice').disabled=!this.checked"></label>
+      <label>Price: $<input type="number" id="edit-cprice" value="${c.price}" min="0" ${c.paid?'':'disabled'}></label>
+      <button type="submit" class="btn">Save</button>
+      <button type="button" class="btn" onclick="showTeacherDashboard('my-courses')">Cancel</button>
+    </form>
+    <div class="panel">
+      <b>Enrolled Students:</b>
+      <ul class="list">
+        ${c.students.map(s=>`<li>${s} ${c.completed.includes(s)?'<span class="cert">[Completed]</span>':''}</li>`).join('')}
+      </ul>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  `;
+  document.getElementById('main-content').innerHTML = html;
+}
+function saveCourse(cid) {
+  let c = courses.find(c=>c.id===cid);
+  c.name = document.getElementById('edit-cname').value.trim();
+  c.category = document.getElementById('edit-ccat').value.trim();
+  c.description = document.getElementById('edit-cdesc').value.trim();
+  c.syllabus = document.getElementById('edit-csyll').value.trim();
+  c.paid = document.getElementById('edit-cpaid').checked;
+  c.price = Number(document.getElementById('edit-cprice').value)||0;
+  alert("Course updated!");
+  showTeacherDashboard('my-courses');
+}
+
+// === STUDENT DASHBOARD ===
+function showStudentDashboard(tab) {
+  currentDashboardTab = tab || currentDashboardTab || "catalog";
+  let nav = `
+    <div style="margin-bottom:22px;">
+      <button class="${currentDashboardTab==='catalog'?'active':''}" onclick="showStudentDashboard('catalog')">Course Catalog</button>
+      <button class="${currentDashboardTab==='my'?'active':''}" onclick="showStudentDashboard('my')">My Courses</button>
+      <button class="${currentDashboardTab==='certs'?'active':''}" onclick="showStudentDashboard('certs')">Certificates</button>
+    </div>
+  `;
+  let content = '';
+  if (currentDashboardTab==='catalog') {
+    content = `
+      <div class="dashboard-header">Course Catalog</div>
+      <input style="width:38%;margin-right:12px;" type="text" id="filter-cat" placeholder="Filter by category" oninput="showStudentDashboard('catalog')">
+      <input style="width:38%;" type="text" id="filter-name" placeholder="Filter by course name" oninput="showStudentDashboard('catalog')">
+      <div id="cat-list"></div>
+    `;
+    document.getElementById('main-content').innerHTML = nav + content + `<button class="logout-btn" onclick="logout()">Logout</button>`;
+    updateCatalogList();
+    return;
+  }
+  if (currentDashboardTab==='my') {
+    content = `
+      <div class="dashboard-header">My Courses</div>
+      <div id="my-courses-list"></div>
+    `;
+    document.getElementById('main-content').innerHTML = nav + content + `<button class="logout-btn" onclick="logout()">Logout</button>`;
+    updateMyCoursesList();
+    return;
+  }
+  if (currentDashboardTab==='certs') {
+    content = `
+      <div class="dashboard-header">My Certificates</div>
+      <div id="my-certs-list"></div>
+    `;
+    document.getElementById('main-content').innerHTML = nav + content + `<button class="logout-btn" onclick="logout()">Logout</button>`;
+    updateMyCertsList();
+    return;
+  }
+}
+function updateCatalogList() {
+  let cat = document.getElementById('filter-cat').value.trim().toLowerCase();
+  let name = document.getElementById('filter-name').value.trim().toLowerCase();
+  let filtered = courses.filter(c=>
+    (cat===""||c.category.toLowerCase().includes(cat)) &&
+    (name===""||c.name.toLowerCase().includes(name))
+  );
+  document.getElementById('cat-list').innerHTML = filtered.map(c=>
+    `<div class="panel" style="margin-bottom:11px;">
+      <b>${c.name}</b> <span class="course-badge">${c.category}</span> <span>by ${c.instructor}</span>
+      ${c.paid?'<span class="paid-badge">[PAID $'+c.price+']</span>':'<span class="course-badge">[FREE]</span>'}<br>
+      <span style="font-size:.97em;">${c.description}</span><br>
+      <button onclick="viewStudentCourse(${c.id})">View Course</button>
+    </div>`
+  ).join('') || "<p>No courses found.</p>";
+}
+function viewStudentCourse(cid) {
+  let c = courses.find(c=>c.id===cid);
+  let enrolled = currentUser.enrolled.includes(cid);
+  let html = `<div class="dashboard-header">${c.name}</div>
+    <b>Instructor:</b> ${c.instructor} <br>
+    <b>Category:</b> ${c.category}<br>
+    <b>Description:</b> ${c.description}<br>
+    <b>Syllabus:</b> ${c.syllabus}<br>
+    <b>Type:</b> ${c.paid ? `<span class="paid-badge">Paid ($${c.price})</span>` : '<span class="course-badge">Free</span>'}<br><br>`;
+  if (!enrolled) {
+    html += `<button class="btn" onclick="enrollStudentCourse(${cid})">Enroll${c.paid?' & Pay':''}</button>`;
+  } else {
+    html += `
+      <div class="panel" style="margin-bottom:5px;">
+        <b>Course Materials:</b>
+        <ul style="margin-top:2px;">
+          <li>Video Lectures</li>
+          <li>Reading Materials</li>
+          <li>Assignments</li>
+        </ul>
+        <button class="btn" onclick="markStudentComplete(${cid})">Mark as Completed</button>
+        <div class="forum">
+          <b>Discussion Forum</b><br>
+          <div id="forum-posts">${c.posts.map(p=>`<div class="forum-post"><b>${p.user}:</b> ${p.msg}</div>`).join('')}</div>
+          <input id="forum-input" style="width:80%;" placeholder="Ask a question or comment...">
+          <button onclick="addStudentPost(${cid})">Post</button>
+        </div>
+        ${c.completed.includes(currentUser.email)?'<div class="cert">&#x1F3C6; Certificate Earned!</div>':''}
+      </div>
+    `;
+  }
+  html += `<br><button class="btn" onclick="showStudentDashboard('catalog')">Back</button>`;
+  document.getElementById('main-content').innerHTML = html;
+}
+function enrollStudentCourse(cid) {
+  let c = courses.find(c=>c.id===cid);
+  if (c.paid) {
+    if (!confirm(`This is a paid course. Pay $${c.price} to enroll?`)) return;
+    alert("Payment successful! (Simulated)");
+  }
+  if (!currentUser.enrolled.includes(cid)) currentUser.enrolled.push(cid);
+  if (!c.students.includes(currentUser.email)) c.students.push(currentUser.email);
+  showStudentDashboard('my');
+}
+function updateMyCoursesList() {
+  let myCourses = courses.filter(c=>currentUser.enrolled.includes(c.id));
+  document.getElementById('my-courses-list').innerHTML = myCourses.length ?
+    myCourses.map(c=>
+      `<div class="panel" style="margin-bottom:10px;">
+        <b>${c.name}</b> <span class="course-badge">${c.category}</span> ${c.paid?'<span class="paid-badge">[PAID]</span>':'<span class="course-badge">[FREE]</span>'}
+        <span style="margin-left:8px;font-size:.97em;">Status: ${c.completed.includes(currentUser.email)?'<b>Completed</b>':'<b>In Progress</b>'}</span>
+        <button class="btn" onclick="viewStudentCourse(${c.id})">View</button>
+      </div>`
+    ).join('') : "<p>You have not enrolled in any courses.</p>";
+}
+function markStudentComplete(cid) {
+  let c = courses.find(c=>c.id===cid);
+  if (!c.completed.includes(currentUser.email)) c.completed.push(currentUser.email);
+  if (!currentUser.certificates.includes(c.id)) currentUser.certificates.push(c.id);
+  alert("Congratulations! You've completed the course and earned a certificate!");
+  showStudentDashboard('my');
+}
+function updateMyCertsList() {
+  let certs = courses.filter(c=>currentUser.certificates.includes(c.id));
+  document.getElementById('my-certs-list').innerHTML = certs.length ?
+    certs.map(c=>
+      `<div class="cert">
+        &#x1F3C6; Certificate of Completion: <b>${c.name}</b>
+        <button class="btn" onclick="downloadCert('${c.name}')">Download</button>
+      </div>`
+    ).join('') : "<p>No certificates yet.</p>";
+}
+function downloadCert(name) {
+  let data = `Certificate of Completion\n\nAwarded to: ${currentUser.email}\nCourse: ${name}\nDate: ${(new Date()).toLocaleDateString()}\n\nLearnHub`;
+  let blob = new Blob([data], {type: "text/plain"});
+  let url = URL.createObjectURL(blob);
+  let a = document.createElement('a');
+  a.href = url; a.download = `${name}-certificate.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function addStudentPost(cid) {
+  let c = courses.find(c=>c.id===cid);
+  let msg = document.getElementById('forum-input').value.trim();
+  if (msg) c.posts.push({user: currentUser.email, msg});
+  viewStudentCourse(cid);
+}
+
+// === INIT ON LOAD ===
+showLanding();
+</script>
+</body>
+</html>
